@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice Generator - Tiger Offers LLC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 0;
+            color: white;
+        }
+
+        header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        header p {
+            opacity: 0.8;
+            font-size: 1rem;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 900px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .form-panel {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .form-panel h2 {
+            color: #1a1a2e;
+            margin-bottom: 25px;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-section {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .form-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .form-section h3 {
+            color: #4a69bd;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .form-row.single {
+            grid-template-columns: 1fr;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 12px 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #4a69bd;
+            box-shadow: 0 0 0 3px rgba(74, 105, 189, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4a69bd 0%, #1a1a2e 100%);
+            color: white;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(74, 105, 189, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f5f5f5;
+            color: #333;
+            margin-top: 10px;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .preview-panel {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .preview-header {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .preview-header h2 {
+            font-size: 1rem;
+            color: #666;
+        }
+
+        .preview-content {
+            padding: 0;
+            background: #f0f0f0;
+            min-height: 600px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 20px;
+        }
+
+        .invoice {
+            background: white;
+            width: 100%;
+            max-width: 595px;
+            min-height: 842px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            font-family: 'Segoe UI', Arial, sans-serif;
+            position: relative;
+        }
+
+        .invoice-header {
+            background: #1a1a2e;
+            color: white;
+            padding: 30px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .invoice-title h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .invoice-title span {
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+
+        .invoice-meta {
+            text-align: right;
+            font-size: 0.85rem;
+        }
+
+        .invoice-meta p {
+            margin-bottom: 4px;
+        }
+
+        .invoice-meta strong {
+            font-weight: 600;
+        }
+
+        .invoice-body {
+            padding: 30px 40px;
+        }
+
+        .parties {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 30px;
+        }
+
+        .party h3 {
+            color: #4a69bd;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .party-name {
+            font-weight: 700;
+            font-size: 1rem;
+            margin-bottom: 5px;
+            color: #1a1a2e;
+        }
+
+        .party-details {
+            font-size: 0.85rem;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .invoice-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .invoice-table th {
+            background: #f5f5f5;
+            padding: 12px 15px;
+            text-align: left;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #1a1a2e;
+        }
+
+        .invoice-table th:last-child {
+            text-align: right;
+        }
+
+        .invoice-table td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            font-size: 0.9rem;
+        }
+
+        .invoice-table td:last-child {
+            text-align: right;
+            font-weight: 600;
+        }
+
+        .product-name {
+            color: #666;
+            font-size: 0.8rem;
+            font-style: italic;
+            margin-top: 4px;
+        }
+
+        .period-badge {
+            display: inline-block;
+            background: #e8f4fd;
+            color: #4a69bd;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            margin-top: 5px;
+        }
+
+        .invoice-total {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 30px;
+        }
+
+        .total-box {
+            background: #4a69bd;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 8px;
+            display: flex;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .total-box span {
+            font-size: 0.9rem;
+        }
+
+        .total-box strong {
+            font-size: 1.4rem;
+        }
+
+        .payment-details {
+            margin-bottom: 25px;
+        }
+
+        .payment-details h3 {
+            color: #4a69bd;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .payment-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px 20px;
+            font-size: 0.85rem;
+        }
+
+        .payment-grid div {
+            display: flex;
+            gap: 8px;
+        }
+
+        .payment-grid span:first-child {
+            color: #999;
+        }
+
+        .payment-grid span:last-child {
+            color: #333;
+        }
+
+        .invoice-notes {
+            background: #f9f9f9;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .invoice-notes h3 {
+            color: #4a69bd;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .invoice-notes p {
+            font-size: 0.8rem;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .invoice-footer {
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #999;
+        }
+
+        .status-paid {
+            display: inline-block;
+            background: #d4edda;
+            color: #155724;
+            padding: 3px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+
+            .container {
+                max-width: none;
+                padding: 0;
+            }
+
+            header, .form-panel, .preview-header, .no-print {
+                display: none !important;
+            }
+
+            .main-content {
+                display: block;
+            }
+
+            .preview-panel {
+                box-shadow: none;
+                border-radius: 0;
+            }
+
+            .preview-content {
+                padding: 0;
+                background: white;
+                min-height: auto;
+            }
+
+            .invoice {
+                box-shadow: none;
+                max-width: none;
+                min-height: auto;
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .invoice {
+            animation: fadeIn 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🐯 Invoice Generator</h1>
+            <p>Tiger Offers LLC - Self-Issued Revenue Invoice</p>
+        </header>
+
+        <div class="main-content">
+            <div class="form-panel">
+                <h2>📝 Dados do Invoice</h2>
+
+                <div class="form-section">
+                    <h3>📋 Informações Gerais</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Número do Invoice</label>
+                            <input type="text" id="invoiceNumber" value="001" placeholder="001">
+                        </div>
+                        <div class="form-group">
+                            <label>Data do Invoice</label>
+                            <input type="date" id="invoiceDate">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>🏢 Fornecedor / Pagador</h3>
+                    <div class="form-row single">
+                        <div class="form-group">
+                            <label>Selecione o Fornecedor</label>
+                            <select id="supplierSelect" onchange="handleSupplierChange()">
+                                <option value="BUYGOODS INC.">BuyGoods Inc.</option>
+                                <option value="CLICKBANK">ClickBank</option>
+                                <option value="DIGISTORE24">Digistore24</option>
+                                <option value="WARRIORPLUS">WarriorPlus</option>
+                                <option value="JVZOO">JVZoo</option>
+                                <option value="custom">Outro (digitar)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row single" id="customSupplierRow" style="display: none;">
+                        <div class="form-group">
+                            <label>Nome do Fornecedor</label>
+                            <input type="text" id="customSupplier" placeholder="Digite o nome do fornecedor">
+                        </div>
+                    </div>
+                    <div class="form-row single">
+                        <div class="form-group">
+                            <label>País do Fornecedor</label>
+                            <input type="text" id="supplierCountry" value="USA">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>📦 Produto / Serviço</h3>
+                    <div class="form-row single">
+                        <div class="form-group">
+                            <label>Nome do Produto/Oferta</label>
+                            <input type="text" id="productName" placeholder="Ex: Java Burn, Ikaria Lean Belly...">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Descrição</label>
+                            <input type="text" id="description" value="Affiliate Commission Payment">
+                        </div>
+                        <div class="form-group">
+                            <label>Período de Referência</label>
+                            <input type="text" id="period" placeholder="Ex: December 2025">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>💰 Valores</h3>
+                    <div class="form-row single">
+                        <div class="form-group">
+                            <label>Valor Recebido (USD)</label>
+                            <input type="number" id="amount" step="0.01" placeholder="0.00" oninput="updatePreview()">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>🏦 Dados Bancários</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Banco</label>
+                            <input type="text" id="bankName" value="Mercury">
+                        </div>
+                        <div class="form-group">
+                            <label>Conta (últimos 4 dígitos)</label>
+                            <input type="text" id="bankAccount" value="****0974">
+                        </div>
+                    </div>
+                    <div class="form-row single">
+                        <div class="form-group">
+                            <label>Referência da Transação (IMAD/OMAD)</label>
+                            <input type="text" id="transactionRef" placeholder="Ex: 20260112MMQFMP2N018252">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>📝 Observações (opcional)</h3>
+                    <div class="form-row single">
+                        <div class="form-group">
+                            <textarea id="notes" placeholder="Notas adicionais..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="window.print()">
+                    🖨️ Imprimir / Salvar PDF
+                </button>
+                <button class="btn btn-secondary" onclick="clearForm()">
+                    🔄 Limpar Formulário
+                </button>
+            </div>
+
+            <div class="preview-panel">
+                <div class="preview-header no-print">
+                    <h2>👁️ Preview do Invoice</h2>
+                    <span class="status-paid">PAID</span>
+                </div>
+                <div class="preview-content">
+                    <div class="invoice" id="invoicePreview">
+                        <div class="invoice-header">
+                            <div class="invoice-title">
+                                <h1>INVOICE</h1>
+                                <span>Self-Issued Revenue Invoice</span>
+                            </div>
+                            <div class="invoice-meta">
+                                <p><strong>Invoice #:</strong> <span id="previewNumber">001</span></p>
+                                <p><strong>Date:</strong> <span id="previewDate">-</span></p>
+                                <p><strong>Currency:</strong> USD</p>
+                            </div>
+                        </div>
+
+                        <div class="invoice-body">
+                            <div class="parties">
+                                <div class="party">
+                                    <h3>From (Invoice Issuer)</h3>
+                                    <div class="party-name">Tiger Offers LLC</div>
+                                    <div class="party-details">
+                                        [Your Address]<br>
+                                        [City, State, ZIP]<br>
+                                        [Country]<br>
+                                        [email@example.com]
+                                    </div>
+                                </div>
+                                <div class="party">
+                                    <h3>To (Payer)</h3>
+                                    <div class="party-name" id="previewSupplier">BUYGOODS INC.</div>
+                                    <div class="party-details" id="previewSupplierCountry">USA</div>
+                                </div>
+                            </div>
+
+                            <table class="invoice-table">
+                                <thead>
+                                    <tr>
+                                        <th>Description</th>
+                                        <th>Amount (USD)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <span id="previewDescription">Affiliate Commission Payment</span>
+                                            <div class="product-name" id="previewProduct">Product: -</div>
+                                            <div class="period-badge" id="previewPeriod">Period: -</div>
+                                        </td>
+                                        <td id="previewAmount">$0.00</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <div class="invoice-total">
+                                <div class="total-box">
+                                    <span>TOTAL:</span>
+                                    <strong id="previewTotal">$0.00</strong>
+                                </div>
+                            </div>
+
+                            <div class="payment-details">
+                                <h3>Payment Details</h3>
+                                <div class="payment-grid">
+                                    <div>
+                                        <span>Status:</span>
+                                        <span><strong style="color: #28a745;">PAID</strong></span>
+                                    </div>
+                                    <div>
+                                        <span>Bank:</span>
+                                        <span id="previewBank">Mercury</span>
+                                    </div>
+                                    <div>
+                                        <span>Account:</span>
+                                        <span id="previewBankAccount">****0974</span>
+                                    </div>
+                                    <div>
+                                        <span>Reference:</span>
+                                        <span id="previewRef">-</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="invoice-notes" id="notesSection">
+                                <h3>Notes</h3>
+                                <p id="previewNotes">This is a self-issued invoice for revenue received from affiliate partnership. Payment has been received and credited to the account specified above.</p>
+                            </div>
+
+                            <div class="invoice-footer">
+                                Thank you for your business!<br>
+                                <span id="previewGenDate">Invoice generated on -</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('invoiceDate').value = today;
+            updatePreview();
+
+            const inputs = document.querySelectorAll('input, select, textarea');
+            inputs.forEach(input => {
+                input.addEventListener('input', updatePreview);
+                input.addEventListener('change', updatePreview);
+            });
+        });
+
+        function handleSupplierChange() {
+            const select = document.getElementById('supplierSelect');
+            const customRow = document.getElementById('customSupplierRow');
+            
+            if (select.value === 'custom') {
+                customRow.style.display = 'block';
+            } else {
+                customRow.style.display = 'none';
+            }
+            updatePreview();
+        }
+
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD'
+            }).format(value || 0);
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '-';
+            const date = new Date(dateStr + 'T00:00:00');
+            return date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+
+        function updatePreview() {
+            document.getElementById('previewNumber').textContent = 
+                document.getElementById('invoiceNumber').value || '001';
+
+            document.getElementById('previewDate').textContent = 
+                formatDate(document.getElementById('invoiceDate').value);
+
+            const supplierSelect = document.getElementById('supplierSelect');
+            let supplier = supplierSelect.value;
+            if (supplier === 'custom') {
+                supplier = document.getElementById('customSupplier').value || '[Fornecedor]';
+            }
+            document.getElementById('previewSupplier').textContent = supplier;
+            document.getElementById('previewSupplierCountry').textContent = 
+                document.getElementById('supplierCountry').value || 'USA';
+
+            document.getElementById('previewDescription').textContent = 
+                document.getElementById('description').value || 'Affiliate Commission Payment';
+
+            const product = document.getElementById('productName').value;
+            document.getElementById('previewProduct').textContent = 
+                product ? `Product: ${product}` : 'Product: -';
+
+            const period = document.getElementById('period').value;
+            document.getElementById('previewPeriod').textContent = 
+                period ? `Period: ${period}` : 'Period: -';
+
+            const amount = parseFloat(document.getElementById('amount').value) || 0;
+            document.getElementById('previewAmount').textContent = formatCurrency(amount);
+            document.getElementById('previewTotal').textContent = formatCurrency(amount);
+
+            document.getElementById('previewBank').textContent = 
+                document.getElementById('bankName').value || 'Mercury';
+            document.getElementById('previewBankAccount').textContent = 
+                document.getElementById('bankAccount').value || '****0974';
+            document.getElementById('previewRef').textContent = 
+                document.getElementById('transactionRef').value || '-';
+
+            const customNotes = document.getElementById('notes').value;
+            const defaultNote = 'This is a self-issued invoice for revenue received from affiliate partnership. Payment has been received and credited to the account specified above.';
+            document.getElementById('previewNotes').textContent = 
+                customNotes ? `${defaultNote}\n\n${customNotes}` : defaultNote;
+
+            document.getElementById('previewGenDate').textContent = 
+                `Invoice generated on ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}`;
+        }
+
+        function clearForm() {
+            if (confirm('Tem certeza que deseja limpar todos os campos?')) {
+                document.getElementById('invoiceNumber').value = '';
+                document.getElementById('invoiceDate').value = new Date().toISOString().split('T')[0];
+                document.getElementById('supplierSelect').value = 'BUYGOODS INC.';
+                document.getElementById('customSupplier').value = '';
+                document.getElementById('customSupplierRow').style.display = 'none';
+                document.getElementById('supplierCountry').value = 'USA';
+                document.getElementById('productName').value = '';
+                document.getElementById('description').value = 'Affiliate Commission Payment';
+                document.getElementById('period').value = '';
+                document.getElementById('amount').value = '';
+                document.getElementById('bankName').value = 'Mercury';
+                document.getElementById('bankAccount').value = '****0974';
+                document.getElementById('transactionRef').value = '';
+                document.getElementById('notes').value = '';
+                updatePreview();
+            }
+        }
+    </script>
+</body>
+</html>
