@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Invoice Generator - WW Growth USA LLC</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0a0a0a;
+    --white: #fafaf8;
+    --accent: #c8a96e;
+    --accent-light: #f5edd8;
+    --gray: #6b6b6b;
+    --gray-light: #e8e6e1;
+    --gray-bg: #f2f0eb;
+    --red: #c0392b;
+    --green: #1a6b3a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--gray-bg);
+    color: var(--black);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--black);
+    color: var(--white);
+    padding: 2rem 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 3px solid var(--accent);
+  }
+  header .logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.6rem;
+    letter-spacing: -0.5px;
+  }
+  header .logo span { color: var(--accent); }
+  header .subtitle {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: #999;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+  header .badge {
+    background: var(--accent);
+    color: var(--black);
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border-radius: 2px;
+  }
+
+  /* ── NOTICE ── */
+  .notice {
+    background: #fff8ec;
+    border-left: 4px solid var(--accent);
+    padding: 1rem 3rem;
+    font-size: 0.82rem;
+    color: #7a5c1e;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .notice strong { font-weight: 600; }
+
+  /* ── TABS ── */
+  .tabs {
+    display: flex;
+    gap: 0;
+    padding: 2rem 3rem 0;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .tab-btn {
+    padding: 0.75rem 2rem;
+    border: 2px solid var(--gray-light);
+    border-bottom: none;
+    background: var(--gray-light);
+    color: var(--gray);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    border-radius: 6px 6px 0 0;
+    transition: all 0.2s;
+    letter-spacing: 0.3px;
+  }
+  .tab-btn.active {
+    background: var(--white);
+    color: var(--black);
+    border-color: var(--gray-light);
+    font-weight: 600;
+  }
+  .tab-btn:hover:not(.active) { background: #e0ddd7; }
+
+  /* ── FORM CARD ── */
+  .form-card {
+    max-width: 900px;
+    margin: 0 auto 3rem;
+    background: var(--white);
+    border: 2px solid var(--gray-light);
+    border-radius: 0 8px 8px 8px;
+    padding: 2.5rem 3rem;
+  }
+
+  .section-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1.2rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--accent-light);
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.2rem;
+    margin-bottom: 2rem;
+  }
+  .form-grid.full { grid-template-columns: 1fr; }
+  .form-grid.triple { grid-template-columns: 1fr 1fr 1fr; }
+
+  .field { display: flex; flex-direction: column; gap: 5px; }
+  .field.span2 { grid-column: span 2; }
+  .field.span3 { grid-column: span 3; }
+
+  label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--gray);
+  }
+  label .req { color: var(--accent); margin-left: 2px; }
+
+  input, select, textarea {
+    padding: 0.7rem 0.9rem;
+    border: 1.5px solid var(--gray-light);
+    border-radius: 4px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    color: var(--black);
+    background: var(--white);
+    transition: border-color 0.2s;
+    outline: none;
+    width: 100%;
+  }
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(200,169,110,0.12);
+  }
+  textarea { resize: vertical; min-height: 70px; }
+
+  .hint {
+    font-size: 0.72rem;
+    color: var(--gray);
+    font-style: italic;
+    margin-top: 2px;
+  }
+  .hint.examples span {
+    display: inline-block;
+    background: var(--accent-light);
+    color: #7a5c1e;
+    font-size: 0.68rem;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 3px;
+    margin: 2px 3px 0 0;
+    font-style: normal;
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* ── GENERATE BUTTON ── */
+  .btn-generate {
+    display: block;
+    width: 100%;
+    padding: 1.1rem;
+    background: var(--black);
+    color: var(--white);
+    border: none;
+    border-radius: 4px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 1.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-generate::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 100%; height: 3px;
+    background: var(--accent);
+  }
+  .btn-generate:hover { background: #1a1a1a; transform: translateY(-1px); }
+  .btn-generate:active { transform: translateY(0); }
+
+  /* ── INVOICE OUTPUT ── */
+  #invoice-output { display: none; }
+  #invoice-output.visible { display: block; }
+
+  .invoice-actions {
+    max-width: 900px;
+    margin: 0 auto 1rem;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+  }
+  .btn-print {
+    padding: 0.6rem 1.4rem;
+    background: var(--accent);
+    color: var(--black);
+    border: none;
+    border-radius: 4px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-print:hover { background: #b8954f; }
+  .btn-back {
+    padding: 0.6rem 1.4rem;
+    background: transparent;
+    color: var(--black);
+    border: 1.5px solid var(--gray-light);
+    border-radius: 4px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-back:hover { border-color: var(--black); }
+
+  /* ── INVOICE DOCUMENT ── */
+  .invoice-doc {
+    max-width: 900px;
+    margin: 0 auto 3rem;
+    background: var(--white);
+    border: 2px solid var(--gray-light);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .inv-header {
+    background: var(--black);
+    color: var(--white);
+    padding: 2.5rem 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  .inv-logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2rem;
+    color: var(--white);
+  }
+  .inv-logo span { color: var(--accent); }
+  .inv-logo .sub {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: #888;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+  .inv-meta { text-align: right; }
+  .inv-meta .inv-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .inv-meta .inv-number {
+    font-family: 'DM Mono', monospace;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--white);
+    margin-top: 2px;
+  }
+  .inv-meta .inv-date {
+    font-size: 0.8rem;
+    color: #aaa;
+    margin-top: 4px;
+  }
+  .inv-meta .inv-due {
+    font-size: 0.8rem;
+    color: var(--accent);
+    font-weight: 600;
+    margin-top: 2px;
+  }
+
+  .inv-body { padding: 2.5rem 3rem; }
+
+  .inv-parties {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 2.5rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--gray-light);
+  }
+  .inv-party-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.6rem;
+  }
+  .inv-party-name {
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 0.2rem;
+  }
+  .inv-party-info {
+    font-size: 0.82rem;
+    color: var(--gray);
+    line-height: 1.6;
+  }
+
+  .inv-service {
+    margin-bottom: 2.5rem;
+  }
+  .inv-service-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1rem;
+  }
+  .inv-service-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+  }
+  .inv-service-table thead tr {
+    background: var(--black);
+    color: var(--white);
+  }
+  .inv-service-table thead th {
+    padding: 0.7rem 1rem;
+    text-align: left;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+  .inv-service-table thead th:last-child { text-align: right; }
+  .inv-service-table tbody tr { border-bottom: 1px solid var(--gray-light); }
+  .inv-service-table tbody td { padding: 1rem; vertical-align: top; }
+  .inv-service-table tbody td:last-child { text-align: right; font-weight: 600; }
+
+  .inv-totals {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 2.5rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--gray-light);
+  }
+  .inv-totals-box { width: 280px; }
+  .inv-total-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    padding: 0.4rem 0;
+    color: var(--gray);
+  }
+  .inv-total-row.total {
+    border-top: 2px solid var(--black);
+    margin-top: 0.5rem;
+    padding-top: 0.8rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--black);
+  }
+
+  .inv-bank {
+    margin-bottom: 2.5rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--gray-light);
+  }
+  .inv-bank-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1rem;
+  }
+  .inv-bank-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.8rem;
+  }
+  .inv-bank-item label {
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--gray);
+    display: block;
+    margin-bottom: 2px;
+  }
+  .inv-bank-item span {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--black);
+  }
+
+  .inv-footer {
+    background: var(--gray-bg);
+    padding: 1.5rem 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.75rem;
+    color: var(--gray);
+    border-top: 1px solid var(--gray-light);
+  }
+  .inv-footer .status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #fff8ec;
+    border: 1px solid var(--accent);
+    color: #7a5c1e;
+    font-weight: 600;
+    font-size: 0.7rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 3px;
+  }
+  .inv-footer .status::before {
+    content: '';
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  .inv-declaration {
+    margin-bottom: 2rem;
+    background: #f8f7f3;
+    border-left: 3px solid var(--accent);
+    padding: 1rem 1.2rem;
+    font-size: 0.82rem;
+    color: var(--gray);
+    line-height: 1.7;
+    font-style: italic;
+  }
+
+  .inv-sign {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1rem;
+  }
+  .inv-sign-box {
+    text-align: center;
+    width: 220px;
+  }
+  .inv-sign-line {
+    border-top: 1.5px solid var(--black);
+    margin-bottom: 6px;
+  }
+  .inv-sign-label {
+    font-size: 0.72rem;
+    color: var(--gray);
+  }
+
+  /* ── PRINT ── */
+  @media print {
+    body { background: white; }
+    header, .notice, .tabs, .form-card, .invoice-actions { display: none !important; }
+    #invoice-output { display: block !important; }
+    .invoice-doc { border: none; box-shadow: none; margin: 0; max-width: 100%; }
+    .btn-print, .btn-back { display: none; }
+    .invoice-actions { display: none; }
+    .inv-footer .status { border: 1px solid #c8a96e; }
+  }
+
+  @media (max-width: 700px) {
+    header { padding: 1.2rem 1.5rem; flex-direction: column; gap: 12px; }
+    .tabs { padding: 1.5rem 1.5rem 0; }
+    .form-card, .inv-body { padding: 1.5rem; }
+    .inv-header { padding: 1.5rem; flex-direction: column; gap: 1rem; }
+    .inv-meta { text-align: left; }
+    .form-grid { grid-template-columns: 1fr; }
+    .form-grid.triple { grid-template-columns: 1fr; }
+    .field.span2, .field.span3 { grid-column: span 1; }
+    .inv-parties { grid-template-columns: 1fr; }
+    .inv-bank-grid { grid-template-columns: 1fr 1fr; }
+    .inv-totals-box { width: 100%; }
+    .invoice-actions { padding: 0 1.5rem; }
+    .inv-footer { flex-direction: column; gap: 10px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="subtitle" style="font-size:0.9rem;letter-spacing:2px;color:#ccc;">Invoice Generator — Service Provider Portal</div>
+  </div>
+  <div class="badge">Invoice</div>
+</header>
+
+<div class="notice">
+  ⚠️ <span><strong>Important:</strong> Payment will only be processed after the invoice has been submitted in advance. Generate, save as PDF, and submit via the form before the due date.</span>
+</div>
+
+<!-- ══ FORM SECTION ══ -->
+<div id="form-section">
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('brl', this)">📱 BRL Account (Brazil)</button>
+  </div>
+
+  <!-- BRL FORM -->
+  <div class="form-card" id="tab-brl">
+
+    <div class="section-title">01 — Service Provider Details</div>
+    <div class="form-grid">
+      <div class="field span2">
+        <label>Full Name <span class="req">*</span></label>
+        <input type="text" id="brl-nome" placeholder="Your full name">
+      </div>
+      <div class="field">
+        <label>CPF or CNPJ <span class="req">*</span></label>
+        <input type="text" id="brl-cpf" placeholder="000.000.000-00">
+      </div>
+      <div class="field">
+        <label>Place of Issue <span class="req">*</span></label>
+        <input type="text" id="brl-local" placeholder="City, State">
+      </div>
+      <div class="field span2">
+        <label>Full Address <span class="req">*</span></label>
+        <input type="text" id="brl-endereco" placeholder="Street, number, city, state">
+      </div>
+    </div>
+
+    <div class="section-title">02 — Service &amp; Amount</div>
+    <div class="form-grid">
+      <div class="field span2">
+        <label>Service Description <span class="req">*</span></label>
+        <input type="text" id="brl-servico" placeholder="e.g. Video editing service">
+        <div class="hint examples">
+          <span>Video editing service</span>
+          <span>Customer service</span>
+          <span>Paid traffic service</span>
+          <span>Content creation service</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>Amount (BRL) <span class="req">*</span></label>
+        <input type="number" id="brl-brl" placeholder="0.00" step="0.01">
+      </div>
+      <div class="field">
+        <label>Issue Date <span class="req">*</span></label>
+        <input type="date" id="brl-emissao">
+      </div>
+      <div class="field">
+        <label>Due Date <span class="req">*</span></label>
+        <input type="date" id="brl-vencimento">
+        <div class="hint">Expected payment date</div>
+      </div>
+      <div class="field">
+        <label>Reference Period <span class="req">*</span></label>
+        <input type="text" id="brl-periodo" placeholder="e.g. March/2026">
+      </div>
+    </div>
+
+    <div class="section-title">03 — Banking Details</div>
+    <div class="form-grid triple">
+      <div class="field">
+        <label>Bank <span class="req">*</span></label>
+        <input type="text" id="brl-banco" placeholder="e.g. Nubank">
+      </div>
+      <div class="field">
+        <label>Branch <span class="req">*</span></label>
+        <input type="text" id="brl-agencia" placeholder="0001">
+      </div>
+      <div class="field">
+        <label>Account Number <span class="req">*</span></label>
+        <input type="text" id="brl-conta" placeholder="00000000-0">
+      </div>
+      <div class="field">
+        <label>Account Type <span class="req">*</span></label>
+        <select id="brl-tipo-conta">
+          <option value="">Select...</option>
+          <option>Checking Account</option>
+          <option>Savings Account</option>
+          <option>Payroll Account</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Account Holder <span class="req">*</span></label>
+        <input type="text" id="brl-titular" placeholder="Account holder name">
+      </div>
+      <div class="field">
+        <label>Account Holder CPF/CNPJ <span class="req">*</span></label>
+        <input type="text" id="brl-titular-cpf" placeholder="000.000.000-00">
+      </div>
+    </div>
+
+    <button class="btn-generate" onclick="generateInvoice('brl')">GENERATE INVOICE →</button>
+  </div>
+
+
+<!-- ══ INVOICE OUTPUT ══ -->
+<div id="invoice-output">
+  <div class="invoice-actions">
+    <button class="btn-back" onclick="goBack()">← Back / Edit</button>
+    <button class="btn-print" onclick="window.print()">🖨️ Save as PDF</button>
+  </div>
+  <div class="invoice-doc" id="invoice-doc"></div>
+</div>
+
+<script>
+  // Set today's date as default
+  const today = new Date().toISOString().split('T')[0];
+  const due = new Date(Date.now() + 7*24*60*60*1000).toISOString().split('T')[0];
+  document.querySelectorAll('input[type=date]').forEach(el => {
+    if (el.id.includes('emissao')) el.value = today;
+    if (el.id.includes('vencimento')) el.value = due;
+  });
+
+  function switchTab(tab, btn) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-brl').style.display = 'block';
+  }
+
+  function fmtDate(d) {
+    if (!d) return '';
+    const [y,m,day] = d.split('-');
+    return `${day}/${m}/${y}`;
+  }
+
+  function fmtUSD(n) {
+    return 'USD ' + parseFloat(n).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+  }
+
+  function fmtBRL(n) {
+    return 'BRL ' + parseFloat(n).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+  }
+
+  function genNumber() {
+    const now = new Date();
+    return `INV-${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}`;
+  }
+
+  function generateInvoice(type) {
+    let data = {};
+    if (type === 'brl') {
+      data = {
+        type: 'brl',
+        nome: document.getElementById('brl-nome').value,
+        cpf: document.getElementById('brl-cpf').value,
+        local: document.getElementById('brl-local').value,
+        endereco: document.getElementById('brl-endereco').value,
+        servico: document.getElementById('brl-servico').value,
+        usd: document.getElementById('brl-brl').value,
+        brl: document.getElementById('brl-brl').value,
+        emissao: document.getElementById('brl-emissao').value,
+        vencimento: document.getElementById('brl-vencimento').value,
+        periodo: document.getElementById('brl-periodo').value,
+        banco: document.getElementById('brl-banco').value,
+        agencia: document.getElementById('brl-agencia').value,
+        conta: document.getElementById('brl-conta').value,
+        tipoConta: document.getElementById('brl-tipo-conta').value,
+        titular: document.getElementById('brl-titular').value,
+        titularCpf: document.getElementById('brl-titular-cpf').value,
+      };
+      const req = ['nome','cpf','local','endereco','servico','brl','emissao','vencimento','periodo','banco','agencia','conta','tipoConta','titular','titularCpf'];
+      for (const k of req) { if (!data[k]) { alert('Please fill in all required fields.'); return; } }
+
+    const invNum = genNumber();
+
+    const bankRows = `<div class="inv-bank-item"><label>Bank</label><span>${data.banco}</span></div>
+         <div class="inv-bank-item"><label>Branch</label><span>${data.agencia}</span></div>
+         <div class="inv-bank-item"><label>Account No.</label><span>${data.conta}</span></div>
+         <div class="inv-bank-item"><label>Account Type</label><span>${data.tipoConta}</span></div>
+         <div class="inv-bank-item"><label>Account Holder</label><span>${data.titular}</span></div>
+         <div class="inv-bank-item"><label>CPF/CNPJ</label><span>${data.titularCpf}</span></div>`;
+
+    document.getElementById('invoice-doc').innerHTML = `
+      <div class="inv-header">
+        <div class="inv-logo">
+          <div class="sub" style="font-size:1rem;letter-spacing:3px;">SERVICE INVOICE</div>
+        </div>
+        <div class="inv-meta">
+          <div class="inv-label">Invoice Number</div>
+          <div class="inv-number">${invNum}</div>
+          <div class="inv-date">Issue date: ${fmtDate(data.emissao)}</div>
+          <div class="inv-due">Due: ${fmtDate(data.vencimento)}</div>
+        </div>
+      </div>
+
+      <div class="inv-body">
+        <div class="inv-parties">
+          <div>
+            <div class="inv-party-label">Bill To</div>
+            <div class="inv-party-name">WW Growth USA LLC</div>
+            <div class="inv-party-info">2201 Menaul Blvd NE, Ste A<br>Albuquerque, NM 87107-1711<br>United States<br>jose.moraes@wwgrowthusa.com</div>
+          </div>
+          <div>
+            <div class="inv-party-label">From / Provider</div>
+            <div class="inv-party-name">${data.nome}</div>
+            <div class="inv-party-info">
+              CPF/CNPJ: ${data.cpf}<br>
+              ${data.endereco}<br>
+              ${data.local}
+            </div>
+          </div>
+        </div>
+
+        <div class="inv-service">
+          <div class="inv-service-title">Services Rendered</div>
+          <table class="inv-service-table">
+            <thead>
+              <tr>
+                <th>Description</th>
+                <th>Period</th>
+                <th>Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>${data.servico}</td>
+                <td>${data.periodo}</td>
+                <td>${fmtUSD(data.usd)}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="inv-totals">
+          <div class="inv-totals-box">${amountRows}</div>
+        </div>
+
+        <div class="inv-bank">
+          <div class="inv-bank-title">Payment Details</div>
+          <div class="inv-bank-grid">${bankRows}</div>
+        </div>
+
+        <div class="inv-declaration">
+          I hereby invoice WW Growth USA LLC for the professional services described above, rendered during the reference period of <strong>${data.periodo}</strong>. Payment is requested by <strong>${fmtDate(data.vencimento)}</strong>. This invoice does not constitute a receipt of payment — settlement confirmation will be issued upon receipt of funds.
+          <br><br>
+          <em>I hereby confirm this invoice is issued for professional services rendered during the reference period of <strong>${data.periodo}</strong>. This invoice does not constitute proof of payment — a receipt will be issued upon payment confirmation.</em>
+        </div>
+
+        <div class="inv-sign">
+          <div class="inv-sign-box">
+            <div class="inv-sign-line"></div>
+            <div class="inv-sign-label">${data.nome} — ${fmtDate(data.emissao)}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="inv-footer">
+        <span>WW Growth USA LLC · Invoice ${invNum} · ${data.local}</span>
+        <span class="status">Awaiting Payment</span>
+      </div>
+    `;
+
+    document.getElementById('form-section').style.display = 'none';
+    document.getElementById('invoice-output').classList.add('visible');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function goBack() {
+    document.getElementById('invoice-output').classList.remove('visible');
+    document.getElementById('form-section').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>
