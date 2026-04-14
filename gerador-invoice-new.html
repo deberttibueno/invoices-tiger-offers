@@ -695,7 +695,7 @@
         titular: document.getElementById('brl-titular').value,
         titularCNPJ: document.getElementById('brl-titular-CNPJ').value,
       };
-      const req = ['nome','cnpj','local','endereco','servico','brl','emissao','vencimento','periodo','banco','agencia','conta','tipoConta','titular','titularCpf'];
+      const req = ['nome','cnpj','local','endereco','servico','brl','emissao','vencimento','periodo','banco','agencia','conta','tipoConta','titular','titularCnpj'];
       for (const k of req) { if (!data[k]) { alert('Please fill in all required fields.'); return; } }
     }
 
