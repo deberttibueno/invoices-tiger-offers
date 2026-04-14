@@ -549,8 +549,8 @@
         <input type="text" id="brl-nome" placeholder="Your full name">
       </div>
       <div class="field">
-        <label>CPF or CNPJ <span class="req">*</span></label>
-        <input type="text" id="brl-cpf" placeholder="000.000.000-00">
+        <label> CNPJ <span class="req">*</span></label>
+        <input type="text" id="brl-cnpj" placeholder="00.000.000/0000-00">
       </div>
       <div class="field">
         <label>Place of Issue <span class="req">*</span></label>
@@ -621,8 +621,8 @@
         <input type="text" id="brl-titular" placeholder="Account holder name">
       </div>
       <div class="field">
-        <label>Account Holder CPF/CNPJ <span class="req">*</span></label>
-        <input type="text" id="brl-titular-cpf" placeholder="000.000.000-00">
+        <label>Account Holder CNPJ <span class="req">*</span></label>
+        <input type="text" id="brl-titular-cnpj" placeholder="00.000.000/0000-00">
       </div>
     </div>
 
@@ -679,7 +679,7 @@
       data = {
         type: 'brl',
         nome: document.getElementById('brl-nome').value,
-        cpf: document.getElementById('brl-cpf').value,
+        cnpj: document.getElementById('brl-cnpj').value,
         local: document.getElementById('brl-local').value,
         endereco: document.getElementById('brl-endereco').value,
         servico: document.getElementById('brl-servico').value,
@@ -693,9 +693,9 @@
         conta: document.getElementById('brl-conta').value,
         tipoConta: document.getElementById('brl-tipo-conta').value,
         titular: document.getElementById('brl-titular').value,
-        titularCpf: document.getElementById('brl-titular-cpf').value,
+        titularCNPJ: document.getElementById('brl-titular-CNPJ').value,
       };
-      const req = ['nome','cpf','local','endereco','servico','brl','emissao','vencimento','periodo','banco','agencia','conta','tipoConta','titular','titularCpf'];
+      const req = ['nome','cnpj','local','endereco','servico','brl','emissao','vencimento','periodo','banco','agencia','conta','tipoConta','titular','titularCpf'];
       for (const k of req) { if (!data[k]) { alert('Please fill in all required fields.'); return; } }
     }
 
@@ -706,7 +706,7 @@
          <div class="inv-bank-item"><label>Account No.</label><span>${data.conta}</span></div>
          <div class="inv-bank-item"><label>Account Type</label><span>${data.tipoConta}</span></div>
          <div class="inv-bank-item"><label>Account Holder</label><span>${data.titular}</span></div>
-         <div class="inv-bank-item"><label>CPF/CNPJ</label><span>${data.titularCpf}</span></div>`;
+         <div class="inv-bank-item"><label>CNPJ</label><span>${data.titularCnpj}</span></div>`;
 
     document.getElementById('invoice-doc').innerHTML = `
       <div class="inv-header">
@@ -732,7 +732,7 @@
             <div class="inv-party-label">From / Provider</div>
             <div class="inv-party-name">${data.nome}</div>
             <div class="inv-party-info">
-              CPF/CNPJ: ${data.cpf}<br>
+              CNPJ: ${data.cnpj}<br>
               ${data.endereco}<br>
               ${data.local}
             </div>
